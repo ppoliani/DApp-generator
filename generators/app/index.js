@@ -5,10 +5,7 @@ const rimraf = require('rimraf');
 
 const installDirs = [
   'src/js',
-  'src/js/common',
-  'src/js/common-api',
-  'src/js/api',
-  'src/solidity/reference'
+  'src/solidity'
 ];
 
 module.exports = class extends Generator {
@@ -40,22 +37,12 @@ module.exports = class extends Generator {
 
   writing() {
     this.log('Copying templates...');
-    this.fs.copyTpl(
-      this.destinationPath(`./${this._projectName}/src/js/_package.json`),
-      this.destinationPath(`./${this._projectName}/src/js/package.json`),
-      {name: this._projectName}
-    );
-    rimraf(`./${this._projectName}/src/js/_package.json`, error => {
-      if(error) {
-        this.log('An error occurred while removing _package.json. Please remove it manually.');
-      }
-    });
   }
 
   install() {
-    // this._yarnInstall();
+    this._yarnInstall();
+    process.chdir(this.destinationPath(this._projectName));
     this._gitInit();
-    this._clean();
   }
 
   _yarnInstall() {
@@ -64,16 +51,12 @@ module.exports = class extends Generator {
       process.chdir(this.destinationPath(`${this._projectName}/${dir}`));
       this.spawnCommandSync('yarn', [], {});
     });
-    process.chdir(this.destinationPath());
   }
 
   _gitInit() {
     this.log('Removing old .git...');
-    rimraf(`./${this._projectName}/.git`, error => {
+    rimraf(`.git`, error => {
       if(error) {
-        this.log('An error occurred while removing old .git/.');
-        this.log(error);
-
         return this._clean(error);
       }
       this.log('Old .git removed');
