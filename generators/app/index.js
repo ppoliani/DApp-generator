@@ -46,11 +46,13 @@ module.exports = class extends Generator {
   }
 
   _yarnInstall() {
-    installDirs.forEach(dir => {
-      this.log(yosay(`Executing yarn in ${this._projectName}/${dir}`));
-      process.chdir(this.destinationPath(`${this._projectName}/${dir}`));
-      this.spawnCommandSync('yarn', [], {});
-    });
+    this.log(yosay(`Executing yarn in ${this._projectName}/src/js`));
+    process.chdir(this.destinationPath(`${this._projectName}/src/js`));
+    this.spawnCommandSync('yarn', [], {});
+
+    this.log(yosay(`Executing yarn in ${this._projectName}/src/solidity/reference`));
+    process.chdir(this.destinationPath(`${this._projectName}/src/solidity/reference`));
+    this.spawnCommandSync('yarn', [], {});
   }
 
   _gitInit() {
